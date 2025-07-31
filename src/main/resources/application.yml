@@ -1,0 +1,54 @@
+server:
+  port: 8083  # Puerto donde corre el servicio de autenticación
+
+spring:
+  application:
+    name: auth-service  # Este será el nombre con el que se registra en Eureka
+
+  main:
+    allow-bean-definition-overriding: true  # A veces útil con Spring Security
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/auth_db?useSSL=false&serverTimezone=UTC
+    username: mpc
+    password: mpc
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+
+  cloud:
+    compatibility-verifier:
+      enabled: false  # Para evitar errores con algunas versiones de librerías (seguridad opcional)
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8701/eureka/
+  instance:
+    prefer-ip-address: true
+
+# Swagger (Springdoc)
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+# (opcional) Logs más detallados para depurar seguridad
+logging:
+  level:
+    org.springframework.security: DEBUG
