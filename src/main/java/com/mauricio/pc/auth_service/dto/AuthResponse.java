@@ -2,9 +2,9 @@ package com.mauricio.pc.auth_service.dto;
 
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 @AllArgsConstructor
 public class AuthResponse {
     private String token;

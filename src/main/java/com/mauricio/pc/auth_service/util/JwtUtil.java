@@ -1,62 +1,57 @@
 package com.mauricio.pc.auth_service.util;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
-import org.springframework.security.core.userdetails.UserDetails;
 
+import java.security.Key;
 import java.util.Date;
-import java.util.function.Function;
 
 @Component
 public class JwtUtil {
 
-    private final String SECRET = "clave_super_secreta";  // ¡No olvides mover esto a application.yml en prod!
-    private final long EXPIRATION_MS = 1000 * 60 * 60 * 24;  // 24 horas
+    private final String SECRET = "esta_es_una_clave_secreta_segura_para_jwt123456";  // usa al menos 256 bits
 
-    // ✅ 1. Generar token con subject (username)
+    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 24h
+
+    private Key getSigningKey() {
+        return Keys.hmacShaKeyFor(SECRET.getBytes());
+    }
+
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
-                .signWith(SignatureAlgorithm.HS256, SECRET)
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // ✅ 2. Extraer username (subject)
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
-    }
-
-    // ✅ 3. Validar token (usuario correcto + no expirado)
-    public boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
-    }
-
-    // ✅ 4. Revisar si expiró
-    private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
-    }
-
-    // ✅ 5. Obtener fecha de expiración
-    private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
-    }
-
-    // ✅ 6. Extraer cualquier claim
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
-    }
-
-    // ✅ 7. Extraer claims del token
-    private Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(SECRET)
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
                 .parseClaimsJws(token)
-                .getBody();
+                .getBody()
+                .getSubject();
+    }
+
+    public boolean isTokenValid(String token, String username) {
+        try {
+            String extractedUsername = extractUsername(token);
+            return (extractedUsername.equals(username) && !isTokenExpired(token));
+        } catch (JwtException e) {
+            return false;
+        }
+    }
+
+    private boolean isTokenExpired(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration()
+                .before(new Date());
     }
 }

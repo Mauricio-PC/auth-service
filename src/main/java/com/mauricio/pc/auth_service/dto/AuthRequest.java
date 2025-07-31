@@ -1,10 +1,9 @@
 package com.mauricio.pc.auth_service.dto;
 
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
+import lombok.Data;
+
+@Data
 public class AuthRequest {
     private String username;
     private String password;

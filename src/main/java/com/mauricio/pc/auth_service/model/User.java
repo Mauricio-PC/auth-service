@@ -1,12 +1,13 @@
 package com.mauricio.pc.auth_service.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Set;
 
 @Entity
-@Getter @Setter
+@Table(name = "users")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
