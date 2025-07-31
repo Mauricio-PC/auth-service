@@ -1,6 +1,7 @@
-package com.mauricio.pc.auth_service.config;
+package com.mauricio.pc.auth_service.filter;
 
 
+import com.mauricio.pc.auth_service.config.UserDetailsServiceImpl;
 import com.mauricio.pc.auth_service.util.JwtUtil;
 
 import javax.servlet.FilterChain;

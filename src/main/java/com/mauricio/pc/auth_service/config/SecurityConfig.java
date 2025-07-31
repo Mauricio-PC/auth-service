@@ -1,5 +1,6 @@
 package com.mauricio.pc.auth_service.config;
 
+import com.mauricio.pc.auth_service.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
