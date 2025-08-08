@@ -1,4 +1,4 @@
-package com.mauricio.pc.auth_service;
+package com.mauricio.pc.authservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
